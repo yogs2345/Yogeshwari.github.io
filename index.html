@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,10 +21,28 @@
       border-bottom: 1px solid var(--border); padding: 1rem 2rem;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .nav-logo { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.1rem; }
+    .nav-logo { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
     .nav-links a:hover { color: var(--accent); }
+
+    /* Hamburger button */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--accent); border-radius: 2px; transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile fullscreen nav */
+    .mobile-nav {
+      display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0;
+      background: rgba(10,15,30,0.98); backdrop-filter: blur(16px);
+      z-index: 99; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2.5rem; list-style: none;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav li a { color: var(--text); text-decoration: none; font-size: 1.4rem; font-family: 'Fira Code', monospace; transition: color 0.2s; }
+    .mobile-nav li a:hover { color: var(--accent); }
 
     .scroll-line { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 200; width: 0%; transition: width 0.1s; }
 
@@ -125,6 +144,30 @@
     .cert-issuer { color: var(--muted); font-size: 0.85rem; }
     .cert-date { color: var(--accent); font-size: 0.8rem; font-family: 'Fira Code', monospace; }
 
+    #resume { padding: 100px 2rem; max-width: 960px; margin: 0 auto; }
+    .resume-card {
+      background: var(--card); border: 2px solid var(--border); border-radius: 12px;
+      padding: 4rem 3rem; text-align: center; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .resume-card:hover { border-color: var(--accent); box-shadow: 0 0 40px rgba(100,255,218,0.08); }
+    .resume-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .resume-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .resume-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .btn-resume-view {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border: 1px solid var(--accent); color: var(--accent);
+      background: transparent; border-radius: 4px; font-size: 0.9rem;
+      text-decoration: none; font-family: 'Fira Code', monospace; transition: all 0.2s;
+    }
+    .btn-resume-view:hover { background: rgba(100,255,218,0.1); }
+    .btn-resume-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; background: var(--accent2); color: white;
+      border: none; border-radius: 4px; font-size: 0.9rem;
+      text-decoration: none; font-family: 'Fira Code', monospace; transition: opacity 0.2s;
+    }
+    .btn-resume-download:hover { opacity: 0.85; }
+
     #contact { padding: 100px 2rem; text-align: center; }
     .contact-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 3rem; max-width: 600px; margin: 0 auto; }
     .contact-box h3 { color: var(--white); font-size: 1.5rem; margin-bottom: 1rem; }
@@ -140,9 +183,11 @@
       .exp-item { grid-template-columns: 1fr; }
       .exp-date { text-align: left; }
       .projects-grid { grid-template-columns: 1fr; }
-      .nav-links { gap: 1rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
     }
   </style>
+</head>
 <body>
 
 <div class="scroll-line" id="scrollLine"></div>
@@ -157,7 +202,20 @@
     <li><a href="#resume">Resume</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Mobile fullscreen menu -->
+<ul class="mobile-nav" id="mobileNav">
+  <li><a href="#about" class="mobile-link">About</a></li>
+  <li><a href="#skills" class="mobile-link">Skills</a></li>
+  <li><a href="#experience" class="mobile-link">Experience</a></li>
+  <li><a href="#projects" class="mobile-link">Projects</a></li>
+  <li><a href="#resume" class="mobile-link">Resume</a></li>
+  <li><a href="#contact" class="mobile-link">Contact</a></li>
+</ul>
 
 <section id="hero">
   <div>
@@ -344,18 +402,26 @@
   </div>
 </section>
 
-<section id="resume" style="padding:100px 2rem;max-width:960px;margin:0 auto;">
-  <h2 style="display:flex;align-items:center;gap:1rem;font-size:1.6rem;font-weight:700;color:#e6f1ff;margin-bottom:3rem;">
-    <span style="font-family:'Fira Code',monospace;color:#64ffda;font-size:1rem;font-weight:400;">06.</span>
-    Resume
-    <span style="flex:1;height:1px;background:#1e2d4a;display:block;margin-left:1rem;"></span>
-  </h2>
-  <div style="background:#111827;border:2px solid #1e2d4a;border-radius:12px;padding:4rem 3rem;text-align:center;transition:border-color 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='#64ffda'" onmouseout="this.style.borderColor='#1e2d4a'">
-    <a href="YOUR_CV_LINK_HERE" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;color:#ccd6f6;text-decoration:none;font-size:1.5rem;font-weight:600;transition:color 0.2s;" onmouseover="this.style.color='#64ffda'" onmouseout="this.style.color='#ccd6f6'">
-      View Full R&eacute;sum&eacute; <span style="font-size:1.3rem;">&#8599;</span>
-    </a>
+<section id="resume">
+  <h2 class="sec-heading" data-num="06.">Resume</h2>
+  <div class="resume-card">
+    <div class="resume-icon">📄</div>
+    <p>My full résumé covering backend development, QA automation, and 5.5+ years of experience. Opens directly in your browser — no download needed.</p>
+    <div class="resume-btns">
+      <a href="https://yogs2345.github.io/Yogeshwari.github.io/Yogeshwari_Nandanwar_Backend_Dev_CV.pdf"
+         target="_blank"
+         class="btn-resume-view">
+        View Résumé ↗
+      </a>
+      <a href="https://yogs2345.github.io/Yogeshwari.github.io/Yogeshwari_Nandanwar_Backend_Dev_CV.pdf"
+         download="Yogeshwari_Nandanwar_Backend_Dev_CV.pdf"
+         class="btn-resume-download">
+        ⬇ Download PDF
+      </a>
+    </div>
   </div>
 </section>
+
 <section id="contact">
   <h2 class="sec-heading" data-num="07.">Get In Touch</h2>
   <div class="contact-box">
@@ -375,4 +441,34 @@
   <p>Designed &amp; Built by Yogeshwari Nandanwar &nbsp;·&nbsp; 2025</p>
 </footer>
 
-<script dat
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scrollLine');
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    el.style.width = (scrollTop / scrollHeight * 100) + '%';
+  });
+
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+    document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+  });
+
+  // Close menu when a link is clicked
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
+</body>
+</html>
