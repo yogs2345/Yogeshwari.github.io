@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yogeshwari Nandanwar | Backend Developer & SDET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0f1e; --card: #111827; --border: #1e2d4a;
+      --accent: #64ffda; --accent2: #7c3aed; --text: #ccd6f6; --muted: #8892b0; --white: #e6f1ff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(10,15,30,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--accent); border-radius: 2px; transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-nav {
+      display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0;
+      background: rgba(10,15,30,0.98); backdrop-filter: blur(16px);
+      z-index: 99; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2.5rem; list-style: none;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav li a { color: var(--text); text-decoration: none; font-size: 1.4rem; font-family: 'Fira Code', monospace; transition: color 0.2s; }
+    .mobile-nav li a:hover { color: var(--accent); }
+
+    .scroll-line { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 200; width: 0%; transition: width 0.1s; }
+
+    section { padding: 100px 0; max-width: 960px; margin: 0 auto; }
+    #hero { min-height: 100vh; display: flex; align-items: center; padding: 0 2rem; padding-top: 80px; }
+
+    .hero-tag { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1rem; margin-bottom: 1rem; }
+    .hero-name { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 0.5rem; }
+    .hero-title { font-size: clamp(1rem, 2.5vw, 1.6rem); color: var(--muted); font-weight: 400; margin-bottom: 1.5rem; }
+    .hero-title span { color: var(--accent2); font-weight: 600; }
+    .hero-title .sep { color: var(--border); margin: 0 0.5rem; }
+    .hero-desc { max-width: 620px; color: var(--muted); font-size: 1rem; margin-bottom: 2.5rem; line-height: 1.8; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary { padding: 0.8rem 2rem; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 4px; font-size: 0.9rem; text-decoration: none; font-family: 'Fira Code', monospace; transition: all 0.2s; display: inline-block; }
+    .btn-primary:hover { background: rgba(100,255,218,0.1); }
+    .btn-secondary { padding: 0.8rem 2rem; background: var(--accent2); color: white; border: none; border-radius: 4px; font-size: 0.9rem; text-decoration: none; transition: opacity 0.2s; display: inline-block; }
+    .btn-secondary:hover { opacity: 0.85; }
+    .contact-strip { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+    .contact-strip a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .contact-strip a:hover { color: var(--accent); }
+    .contact-strip span { color: var(--accent); margin-right: 4px; }
+
+    .sec-heading { display: flex; align-items: center; gap: 1rem; font-size: 1.6rem; font-weight: 700; color: var(--white); margin-bottom: 3rem; padding: 0 2rem; }
+    .sec-heading::before { content: attr(data-num); font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1rem; font-weight: 400; }
+    .sec-heading::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    #about { padding: 100px 2rem; }
+    .about-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 3rem; align-items: start; }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; font-size: 0.95rem; }
+    .about-text p span { color: var(--accent); font-weight: 500; }
+    .about-highlights { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+    .highlight-item { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .highlight-item:last-child { border-bottom: none; }
+    .highlight-item .label { color: var(--muted); }
+    .highlight-item .value { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+
+    #skills { padding: 100px 2rem; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .skill-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; transition: border-color 0.2s, transform 0.2s; }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .skill-card h4 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.85rem; margin-bottom: 1rem; letter-spacing: 1px; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag { background: rgba(100,255,218,0.07); color: var(--text); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(100,255,218,0.15); }
+    .tag.new { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.4); color: #c4b5fd; }
+
+    #experience { padding: 100px 2rem; }
+    .exp-item { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; margin-bottom: 3rem; }
+    .exp-date { text-align: right; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--accent); padding-top: 0.3rem; }
+    .exp-content { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+    .exp-content.current { border-color: var(--accent); box-shadow: 0 0 24px rgba(100,255,218,0.07); }
+    .current-badge { display: inline-block; background: rgba(100,255,218,0.1); color: var(--accent); border: 1px solid var(--accent); padding: 0.15rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-family: 'Fira Code', monospace; margin-bottom: 0.8rem; }
+    .exp-company { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.3rem; }
+    .exp-role { color: var(--white); font-weight: 600; font-size: 1.05rem; margin-bottom: 0.4rem; }
+    .exp-client { color: var(--muted); font-size: 0.82rem; margin-bottom: 1rem; font-style: italic; }
+    .exp-content ul { list-style: none; }
+    .exp-content ul li { color: var(--muted); font-size: 0.9rem; padding: 0.3rem 0 0.3rem 1.2rem; position: relative; }
+    .exp-content ul li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); }
+    .badge { display: inline-block; background: rgba(124,58,237,0.2); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.75rem; margin-top: 0.8rem; margin-right: 0.4rem; }
+
+    #projects { padding: 100px 2rem; }
+    .featured-project { background: var(--card); border: 1px solid var(--accent); border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 0 40px rgba(100,255,218,0.05); }
+    .featured-label { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.8rem; margin-bottom: 0.8rem; letter-spacing: 1px; }
+    .featured-project h3 { color: var(--white); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .featured-project .tagline { color: var(--accent2); font-size: 0.95rem; margin-bottom: 1.5rem; font-weight: 500; }
+    .featured-desc { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.8; }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .feature-item { background: rgba(100,255,218,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .feature-item .fi-label { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.75rem; margin-bottom: 0.4rem; }
+    .feature-item .fi-value { color: var(--text); font-size: 0.88rem; }
+    .content-types { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+    .ct-tag { background: rgba(124,58,237,0.15); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-family: 'Fira Code', monospace; }
+    .featured-techs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .featured-tech { background: rgba(100,255,218,0.07); color: var(--text); padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(100,255,218,0.15); }
+    .section-sublabel { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.8rem; margin-top: 1.5rem; }
+    .section-sublabel span { font-family: 'Fira Code', monospace; color: var(--accent2); font-size: 0.78rem; }
+
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+    .project-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; transition: border-color 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+    .project-card:hover { border-color: var(--accent2); transform: translateY(-5px); }
+    .project-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .project-icon { font-size: 2rem; }
+    .project-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .project-links a:hover { color: var(--accent); }
+    .project-card h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 0.8rem; }
+    .project-card p { color: var(--muted); font-size: 0.9rem; flex: 1; margin-bottom: 1.5rem; }
+    .project-techs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .project-tech { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.78rem; }
+    .project-tech:not(:last-child)::after { content: ' · '; color: var(--muted); }
+
+    #education { padding: 100px 2rem; }
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .edu-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+    .edu-card .degree { color: var(--white); font-weight: 600; margin-bottom: 0.3rem; }
+    .edu-card .university { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .edu-card .year { color: var(--muted); font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+    .cert-card { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(100,255,218,0.05)); border: 1px solid var(--accent2); border-radius: 8px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+    .cert-icon { font-size: 2.5rem; }
+    .cert-name { color: var(--white); font-weight: 600; }
+    .cert-issuer { color: var(--muted); font-size: 0.85rem; }
+    .cert-date { color: var(--accent); font-size: 0.8rem; font-family: 'Fira Code', monospace; }
+
+    #resume { padding: 100px 2rem; max-width: 960px; margin: 0 auto; }
+    .resume-card {
+      background: var(--card); border: 2px solid var(--border); border-radius: 12px;
+      padding: 4rem 3rem; text-align: center; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .resume-card:hover { border-color: var(--accent); box-shadow: 0 0 40px rgba(100,255,218,0.08); }
+    .resume-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .resume-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .resume-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .btn-resume-view {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border: 1px solid var(--accent); color: var(--accent);
+      background: transparent; border-radius: 4px; font-size: 0.9rem;
+      text-decoration: none; font-family: 'Fira Code', monospace; transition: all 0.2s;
+    }
+    .btn-resume-view:hover { background: rgba(100,255,218,0.1); }
+    .btn-resume-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; background: var(--accent2); color: white;
+      border: none; border-radius: 4px; font-size: 0.9rem;
+      text-decoration: none; font-family: 'Fira Code', monospace; transition: opacity 0.2s;
+    }
+    .btn-resume-download:hover { opacity: 0.85; }
+
+    #contact { padding: 100px 2rem; text-align: center; }
+    .contact-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 3rem; max-width: 600px; margin: 0 auto; }
+    .contact-box h3 { color: var(--white); font-size: 1.5rem; margin-bottom: 1rem; }
+    .contact-box p { color: var(--muted); margin-bottom: 2rem; }
+    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; }
+    .contact-link { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .contact-link:hover { color: var(--accent); }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; font-family: 'Fira Code', monospace; }
+
+    @media (max-width: 768px) {
+      .about-grid, .edu-grid, .feature-grid { grid-template-columns: 1fr; }
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-date { text-align: left; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-line" id="scrollLine"></div>
+
+<nav>
+  <div class="nav-logo">Yogeshwari<span style="color:var(--accent2);">.</span>dev</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#resume">Resume</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<ul class="mobile-nav" id="mobileNav">
+  <li><a href="#about" class="mobile-link">About</a></li>
+  <li><a href="#skills" class="mobile-link">Skills</a></li>
+  <li><a href="#experience" class="mobile-link">Experience</a></li>
+  <li><a href="#projects" class="mobile-link">Projects</a></li>
+  <li><a href="#resume" class="mobile-link">Resume</a></li>
+  <li><a href="#contact" class="mobile-link">Contact</a></li>
+</ul>
+
+<section id="hero">
+  <div>
+    <h1 class="hero-name">Yogeshwari<br/>Nandanwar</h1>
+    <h2 class="hero-title"><span>Backend Developer</span><span class="sep">|</span>SDET</h2>
+    <p class="hero-desc">5.5+ years in tech — 4.5 years mastering QA automation and 1+ year building production backend systems for international clients. Currently developing a full-scale e-commerce platform for the global book marketplace using Strapi, Node.js, and PostgreSQL. I build software and ensure it works flawlessly.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/UNestCore/CMS_strapi_Project" target="_blank" class="btn-primary">View My Work</a>
+    </div>
+    <div class="contact-strip">
+      <a href="tel:9657821634"><span>📞</span>9657821634</a>
+      <span style="font-family:'Fira Code',monospace;font-size:0.8rem;"><span style="color:var(--accent);margin-right:4px;">&#9993;</span><span style="color:var(--muted);">yogs2345&#64;gmail&#46;com</span></span>
+      <a href="https://www.linkedin.com/in/yogeshwari-nandanwar-50304a233" target="_blank"><span>💼</span>LinkedIn</a>
+      <a href="https://github.com/yogs2345" target="_blank"><span>🐙</span>GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <h2 class="sec-heading" data-num="01.">About Me</h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm a <span>Backend Developer & SDET</span> with 5.5+ years in software, currently consulting for an international client building <span>NewButUsed.com</span> — a production-grade e-commerce platform where book lovers buy and sell books.</p>
+      <p>I manage the <span>full backend lifecycle</span> — designing content types in Strapi v5, building REST APIs, writing Swagger documentation, and deploying to Ubuntu production servers managed with PM2 and Cloudflare. I work across <span>4 environments</span> (2 local, 2 server-based) each with its own dedicated PostgreSQL database.</p>
+      <p>My QA background gives me a unique edge — I write backend code with a <span>quality-first mindset</span>, building APIs that are well-documented, well-tested, and production-ready from day one.</p>
+      <p>Previously at Webware.ai, I built a common automation framework adopted by <span>8+ teams</span> and was awarded <span>"Engineer of the Month"</span> for my impact on quality processes.</p>
+    </div>
+    <div class="about-highlights">
+      <div class="highlight-item"><span class="label">Total Experience</span><span class="value">5.5+ Years</span></div>
+      <div class="highlight-item"><span class="label">Current Role</span><span class="value">Backend Dev</span></div>
+      <div class="highlight-item"><span class="label">Client</span><span class="value">NewButUsed.com</span></div>
+      <div class="highlight-item"><span class="label">CMS</span><span class="value">Strapi v5</span></div>
+      <div class="highlight-item"><span class="label">Database</span><span class="value">PostgreSQL (x4)</span></div>
+      <div class="highlight-item"><span class="label">Server</span><span class="value">Ubuntu + PM2</span></div>
+      <div class="highlight-item"><span class="label">QA Stack</span><span class="value">Java + Selenium</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="sec-heading" data-num="02.">Technical Skills</h2>
+  <div class="skills-grid">
+    <div class="skill-card"><h4>// LANGUAGES</h4><div class="skill-tags"><span class="tag new">JavaScript</span><span class="tag new">Node.js</span><span class="tag">Java</span><span class="tag">PostgreSQL</span></div></div>
+    <div class="skill-card"><h4>// BACKEND & CMS</h4><div class="skill-tags"><span class="tag new">Strapi v5</span><span class="tag new">REST API</span><span class="tag new">Swagger / OpenAPI</span><span class="tag new">Meilisearch</span><span class="tag new">Nodemailer</span></div></div>
+    <div class="skill-card"><h4>// DEVOPS & INFRA</h4><div class="skill-tags"><span class="tag new">Ubuntu Server</span><span class="tag new">PM2</span><span class="tag new">Cloudflare</span><span class="tag new">Firebase</span><span class="tag">Jenkins</span><span class="tag">Git / GitHub</span></div></div>
+    <div class="skill-card"><h4>// TEST AUTOMATION</h4><div class="skill-tags"><span class="tag">Selenium WebDriver</span><span class="tag">Cucumber (BDD)</span><span class="tag">TestNG</span><span class="tag">JUnit</span><span class="tag">Selenide</span></div></div>
+    <div class="skill-card"><h4>// API & PERFORMANCE</h4><div class="skill-tags"><span class="tag new">Postman</span><span class="tag">RestAssured</span></div></div>
+    <div class="skill-card"><h4>// TOOLS & COLLABORATION</h4><div class="skill-tags"><span class="tag">JIRA</span><span class="tag">Confluence</span><span class="tag">Agile / Scrum</span><span class="tag">Maven</span></div></div>
+  </div>
+  <p style="text-align:center;margin-top:1.5rem;font-family:'Fira Code',monospace;font-size:0.78rem;color:var(--muted);">
+    <span style="color:#c4b5fd;">■</span> Purple = Current active skills &nbsp;|&nbsp;
+    <span style="color:rgba(100,255,218,0.5);">■</span> Teal = Prior expertise
+  </p>
+</section>
+
+<section id="experience">
+  <h2 class="sec-heading" data-num="03.">Experience</h2>
+
+  <div class="exp-item">
+    <div class="exp-date">Jan 2025 — Present</div>
+    <div class="exp-content current">
+      <span class="current-badge">● Currently Working</span>
+      <div class="exp-company">NewButUsed.com · Foreign Client (Remote)</div>
+      <div class="exp-role">Backend Developer — Consultant</div>
+      <div class="exp-client">E-commerce platform for buying and selling books</div>
+      <ul>
+        <li>Designed and built the entire backend using <strong>Strapi v5 (5.20.0)</strong> with Node.js and PostgreSQL</li>
+        <li>Created all content types: Address, Buyer, Product, Order, Sell, User, Wishlist, Device Token, Refresh Token, User Session</li>
+        <li>Implemented <strong>User Session</strong> and <strong>Refresh Token</strong> management to handle secure login, token refresh flows, and automatic logout on session expiry</li>
+        <li>Managed <strong>4 environments</strong> — 2 local and 2 server-based (dev + production), each with its own dedicated database</li>
+        <li>Wrote full <strong>Swagger / OpenAPI documentation</strong> for all REST API endpoints</li>
+        <li>Integrated <strong>Meilisearch</strong> for fast, typo-tolerant book search across the platform</li>
+        <li>Implemented <strong>Nodemailer</strong> for transactional email workflows (order confirmation, notifications)</li>
+        <li>Configured <strong>Firebase</strong> for push notifications and authentication services</li>
+        <li>Deployed and managed production services on <strong>Ubuntu server</strong> using PM2 process manager</li>
+        <li>Managed all deployments and Git workflows through <strong>Sourcetree</strong> for a clean, visual branching and release process</li>
+        <li>Set up <strong>Cloudflare</strong> for hosting, DNS management, and email routing</li>
+        <li>Tested all APIs using <strong>Postman</strong> across all environments before release</li>
+        <li>Used <strong>ClickUp</strong> for project management, task tracking, and team collaboration</li>
+        <li>Leveraged <strong>Claude AI</strong> and <strong>ChatGPT</strong> as development assistants to accelerate backend development and problem-solving</li>
+      </ul>
+      <a href="https://github.com/UNestCore/CMS_strapi_Project" target="_blank" style="display:inline-block;margin-top:1rem;font-family:'Fira Code',monospace;font-size:0.82rem;color:var(--accent);border:1px solid var(--accent);padding:0.4rem 1rem;border-radius:4px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='rgba(100,255,218,0.1)'" onmouseout="this.style.background='transparent'">🐙 View GitHub Repo ↗</a>
+    </div>
+  </div>
+
+  <div class="exp-item">
+    <div class="exp-date">May 2022 — Dec 2023</div>
+    <div class="exp-content">
+      <div class="exp-company">Webware.ai · Remote, India</div>
+      <div class="exp-role">Senior Quality Analyst</div>
+      <ul>
+        <li>Built a common testing framework (Java, Cucumber, RestAssured) adopted across 8+ teams</li>
+        <li>Achieved 100% automation coverage of manual scenarios (Java, Selenide, Cucumber, GUI)</li>
+        <li>Integrated automation jobs into Jenkins; maintained logs, reporting and bug verification</li>
+        <li>Created test quality metrics, training materials and onboarding processes for 8 teams</li>
+        <li>Led responsive web app testing ensuring optimal performance across all devices</li>
+        <li>Managed client communication end-to-end via the Moxo app</li>
+        <li>Performed end-to-end <strong>Manual Testing</strong> including Functional, Regression, and Retesting across multiple product releases</li>
+        <li>Conducted thorough <strong>Regression Testing</strong> after each sprint to ensure no existing functionality was broken by new changes</li>
+      </ul>
+      <span class="badge">🏆 Engineer of the Month — QA</span>
+      <span class="badge">🏆 Customer Support Vertical</span>
+    </div>
+  </div>
+
+  <div class="exp-item">
+    <div class="exp-date">Aug 2019 — Apr 2022</div>
+    <div class="exp-content">
+      <div class="exp-company">Softogrid Solutions Pvt. Ltd. · Remote, India</div>
+      <div class="exp-role">Junior Test Engineer</div>
+      <ul>
+        <li>GUI & Functional testing for WooCommerce Multi-Vendor Marketplace plugin</li>
+        <li>End-to-end testing of Payment Gateway plugin for WooCommerce</li>
+        <li>Database testing using PG Admin (PostgreSQL)</li>
+        <li>API testing via Postman for REST endpoints</li>
+        <li>Full QA lifecycle: test planning, execution, defect management in JIRA (Agile)</li>
+        <li>Performed comprehensive <strong>Manual Testing</strong> — Functional, Regression, Retesting, and End-to-End testing for e-commerce plugins</li>
+        <li>Executed <strong>Regression Test Suites</strong> for every release cycle ensuring product stability and quality</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="sec-heading" data-num="04.">Projects</h2>
+  <div class="featured-project">
+    <p class="featured-label">FEATURED PROJECT — CURRENTLY IN PRODUCTION</p>
+    <h3>NewButUsed.com</h3>
+    <p class="tagline">📚 E-commerce platform for buying & selling books — Built for book lovers worldwide</p>
+    <p class="featured-desc">A full-scale e-commerce backend built from scratch for an international client. The platform enables book lovers to list, discover, buy, and sell used and new books. I am solely responsible for the entire backend — content modelling, API design, server deployment, and production management across 4 environments with 4 separate databases. Development was accelerated using <strong style="color:#c4b5fd;">Claude AI</strong> and <strong style="color:#c4b5fd;">ChatGPT</strong> as intelligent coding assistants throughout the build.</p>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="fi-label">// ENVIRONMENTS</div><div class="fi-value">4 total — 2 local (dev) + 2 server (dev + production), each with its own database</div></div>
+      <div class="feature-item"><div class="fi-label">// DATABASES</div><div class="fi-value">4 x PostgreSQL instances — isolated per environment for clean dev/prod separation</div></div>
+      <div class="feature-item"><div class="fi-label">// API DOCS</div><div class="fi-value">Full Swagger / OpenAPI documentation for all REST endpoints</div></div>
+      <div class="feature-item"><div class="fi-label">// SERVER</div><div class="fi-value">Ubuntu production server managed with PM2, hosted via Cloudflare</div></div>
+    </div>
+    <div class="section-sublabel"><span>// CONTENT TYPES BUILT</span></div>
+    <div class="content-types">
+      <span class="ct-tag">Address</span><span class="ct-tag">Buyer</span><span class="ct-tag">Device Token</span><span class="ct-tag">Order</span><span class="ct-tag">Product</span><span class="ct-tag">Refresh Token</span><span class="ct-tag">Sell</span><span class="ct-tag">User</span><span class="ct-tag">User Session</span><span class="ct-tag">Wishlist</span>
+    </div>
+    <div class="section-sublabel"><span>// TECH STACK</span></div>
+    <div class="featured-techs">
+      <span class="featured-tech">Strapi v5 (5.20.0)</span><span class="featured-tech">Node.js</span><span class="featured-tech">JavaScript</span><span class="featured-tech">PostgreSQL</span><span class="featured-tech">REST API</span><span class="featured-tech">Swagger</span><span class="featured-tech">Meilisearch</span><span class="featured-tech">Nodemailer</span><span class="featured-tech">Firebase</span><span class="featured-tech">Ubuntu</span><span class="featured-tech">PM2</span><span class="featured-tech">Cloudflare</span><span class="featured-tech">Postman</span><span class="featured-tech">Git / GitHub</span><span class="featured-tech">Sourcetree</span><span class="featured-tech">ClickUp</span><span class="featured-tech">Claude AI</span><span class="featured-tech">ChatGPT</span>
+    </div>
+    <a href="https://github.com/UNestCore/CMS_strapi_Project" target="_blank" class="btn-primary">View on GitHub ↗</a>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-top">
+        <div class="project-icon">🤖</div>
+        <div class="project-links"><a href="https://github.com/yogs2345" target="_blank">GitHub ↗</a></div>
+      </div>
+      <h3>Selenium + Cucumber Automation Framework</h3>
+      <p>Enterprise-grade UI test automation framework with Page Object Model design pattern. Includes data-driven testing, parallel execution, Allure reporting, and CI/CD integration via GitHub Actions.</p>
+      <div class="project-techs">
+        <span class="project-tech">Java</span><span class="project-tech">Selenium</span><span class="project-tech">Cucumber BDD</span><span class="project-tech">TestNG</span><span class="project-tech">Maven</span><span class="project-tech">GitHub Actions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <h2 class="sec-heading" data-num="05.">Education & Certifications</h2>
+  <div class="edu-grid">
+    <div class="edu-card">
+      <div class="degree">MSc in Computer Science</div>
+      <div class="university">Gondwana University</div>
+      <div class="year">2015 · Gadchiroli, India</div>
+    </div>
+    <div class="edu-card">
+      <div class="degree">Bachelor of Computer Applications</div>
+      <div class="university">Nagpur University</div>
+      <div class="year">2011 · Nagpur, India</div>
+    </div>
+  </div>
+  <div class="cert-card">
+    <div class="cert-icon">🎓</div>
+    <div>
+      <div class="cert-name">Java / Selenium Certification</div>
+      <div class="cert-issuer">Naresh i Technology, Hyderabad</div>
+      <div class="cert-date">Issued September 2021</div>
+    </div>
+  </div>
+</section>
+
+<section id="resume">
+  <h2 class="sec-heading" data-num="06.">Resume</h2>
+  <div class="resume-card">
+    <div class="resume-icon">📄</div>
+    <p>My full résumé covering backend development, QA automation, and 5.5+ years of experience. Opens directly in your browser — no download needed.</p>
+    <div class="resume-btns">
+      <a href="https://yogs2345.github.io/Yogeshwari.github.io/Yogeshwari_Nandanwar_CV%20_Backend.pdf"
+         target="_blank"
+         class="btn-resume-view">
+        View Résumé ↗
+      </a>
+      <a href="https://yogs2345.github.io/Yogeshwari.github.io/Yogeshwari_Nandanwar_CV%20_Backend.pdf"
+         download="Yogeshwari_Nandanwar_CV _Backend.pdf"
+         class="btn-resume-download">
+        ⬇ Download PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2 class="sec-heading" data-num="07.">Get In Touch</h2>
+  <div class="contact-box">
+    <h3>Let's Work Together 🚀</h3>
+    <p>Open to Backend Developer and SDET opportunities. I bring both development and quality expertise to every team I join.</p>
+    <button class="btn-primary" onclick="var e='yogs2345'+'@'+'gmail.com';window.location='mai'+'lto:'+e;">Say Hello ✉</button>
+    <div class="contact-links">
+      <a href="tel:9657821634" class="contact-link">📞 9657821634</a>
+      <span class="contact-link" style="cursor:default;">&#9993; yogs2345&#64;gmail&#46;com</span>
+      <a href="https://www.linkedin.com/in/yogeshwari-nandanwar-50304a233" target="_blank" class="contact-link">💼 LinkedIn</a>
+      <a href="https://github.com/yogs2345" target="_blank" class="contact-link">🐙 GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Designed &amp; Built by Yogeshwari Nandanwar &nbsp;·&nbsp; 2025</p>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scrollLine');
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    el.style.width = (scrollTop / scrollHeight * 100) + '%';
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+    document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+  });
+
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
+</body>
+</html>
